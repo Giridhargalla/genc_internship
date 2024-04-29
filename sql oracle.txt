@@ -1,0 +1,52 @@
+sql commands:
+DDL(data definition language): structure
+(create,alter,Rename,Truncate,Drop)(auto commit)
+create:
+create table customer
+(
+cust_id number(8),
+cust_name varchar2(30),
+date date
+);
+
+Alter:
+alter table customer
+modify cust_name varchar(50);
+
+desc customer; -- describes the table
+
+DML(data manupulation language): insert, delete,update(manual commit))
+
+-- to insert any values in a table:
+
+insert into customer()
+values(123,'Giri',to_date('08/04/1999','MM/DD/YYYY'));
+
+-- update:
+update customer()
+set cust_name='giridhar'
+where cust_id= 123;
+
+transition control language(TCL):
+commit, rollback,savepoint
+
+data query language(DQL): select
+Data control language(DCL): grant,revoke
+
+alter table employee
+add country varchar(30) default "INDIA";
+
+
+update  employee
+set e_gender = 'Male' where e_id = 6;
+
+insert into employee()
+values(1,'giri',50000,'Male'),
+(2,'sara',60000,'Female'),
+(3,'saradha',80000,'Female'),
+(4,'sarath',30000,'Male'),
+(5,'saranya',160000,'Female'),
+(6,'sarukh ',2000,'Female');
+
+
+

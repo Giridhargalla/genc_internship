@@ -1,0 +1,252 @@
+big data= huge collection of data (it is a problem)
+hadoop = is the solution for handling this large data
+
+Big data - hdfs = hadoop distributed file system (data storage)
+ and map reduce = (data processing)
+
+hadoop 3 v's:
+velocity : data will be processed at a large speed
+---------------
+earlier:
+batch processing= 24 hrs
+ periodic = 1hr
+near real time = 1 min or 2 min
+real time = no interval 
+
+variety:
+--------
+structured, unstructured and semi structured data can be stored
+
+volume: supports huge volume of data
+-------
+
+eco systems:
+hive= sql language
+sqoop= data integration tool (rdbms--> hdfs(import) or hdfs --> rdbms(export))
+pig= pig script
+spark
+
+linux commands
+----------------
+pwd
+ls
+ls -ltr = to know about the file types and details.
+whoami
+hostname
+
+d rwx rwx rwx
+d(folder/file) rwx(user) rwx(group) rwx(others)
+drwxrwxrwx= if start is d then directory
+_rwxrwxrwx= it is a file
+
+r-4
+w-2
+x-1
+
+chmod 700 hari then= drwx------
+
+cd = change directory
+cd .. 
+
+creating a file:
+nano file.txt ()
+cat>file.txt (to save cltr +c)
+
+Hadoop:
+-------
+main 2 components are there in hadoop:
+1 HDFS(hadoop distributed file system): storing the data
+2 Mapreduce: data processing
+
+there are 3 versions of hadoop: 
+hadoop 1.x:
+----------
+its has hdfs: storing purpose
+mapreduce: data processing + resource allotment
+
+hadoop 2.x:
+----------
+ hdfs: storing purpose
+mapreduce: data processing
+yarn(yet another resource negotiator):resource manger.
+
+Hadoop architecture:
+--------------------
+* it is a master and slave architecture.
+cluster: if more than 1 computer is connected or integrated with each other.
+2machines: 2node cluster
+5 machines: 5 node cluster
+
+features of hadoop:
+1) reliable: handle failure(data replication), dfault replication factor is 3
+2) flexible: add more machines without a down time.
+3) economical: commercial hardware used is cheap.
+4) stable: reliable + 
+
+HDFS:
+=====
+*used for storege purpose,*main component in hadoop eco system,
+components:
+$ name node: stores only meta data
+$ data node: stores actual data
+$ secondary name node: its a helper node for name node.
+$ fsimage: now it will upload the data in the secondary name node. 
+$ edit logs: first if any change in name node it will record and upload to fsimage time to time.
+
+ex: image.jpg = 10 mb
+metadata=
+file name:image
+file location
+file type:jpg
+no of blocks
+blocks location
+
+Blocks:
+========
+hard disk= 4 kb
+HDFS: 128 mb
+
+hadoop problem:
+------------------
+* hadoop is not good for large no of small files.
+* hadoop is good for small no of large files.
+
+replications:
+--------------
+same block is copied into different nodes.
+* replication can be increased or decreased in (hdfs-site.xml)
+
+hdfs can be accessed in 2 ways: 1 using cli hdfs commands or web browser.
+
+hdfs commands:
+--------------
+
+hdfs dfs -ls /user/cloudera/ = what are there in  the folder
+hdfs dfs -mkdir /user/cloudera/honey = to make a directory named honey.
+hdfs dfs -rm -r /user/cloudera/honey= removes directory even if it is not empty (use rmdir only if the folder is empty)
+* to change file properties: hdfs dfs -chmod 777 /user/cloudera
+to copy a file from localfs to hadoop fd:
+hdfs dfs -put local_file_system(lfs) hdfs
+hdfs dfs -copyFromLocal lfs hdfs
+
+to copy a file from hadoop fs to local fs:
+hdfs dfs -get user/cloudera/honey.txt .(if we use . that means it will copy to the current directory)
+hdfs dfs -copyToLocal hdfs lfs
+
+* hdfs dfs -cp sourcefile targetfile
+* hdfs dfs -mv sourcefile targetfile
+
+to change group and user name then
+* hdfs dfs -chgrp hadoop /user/cloudera
+*hdfs dfs -chown mapred /user/cloudera
+
+
+
+
+mapreduce:
+----------
+
+hdfs archi:
+----------
+* name node:
+*data node:
+
+mapreduce archi:
+------------------
+*job tracker: key component of hadoop mapreduce engine that manges and monitor the processing of jobs submitted to the hdfs.
+responsible:
+# accepting jobs from client
+# scheduling jobs
+# monitoring task progress
+# managing the overall execution of jobs.
+* task tracker: it runs in slave node in hadoop cluster.
+when job submitted to the hadoop cluster , job tracker divides it into smaller tasks and assignes them to different task trackers.
+responsible: execute the task assigned and report to job tracker.
+
+mapreduce : 2 phases
+
+map phase: key value pairs generated
+reduce phase : here they are grouped.
+
+ex : hello ram
+ hi ram hello
+map phase:m1= (hello,1),(ram,1)
+m2=(hi,1),(ram,1),(hello,1)
+
+sufflee or sorting: ((hello,1),(hello,1)),((ram,1),(ram,1)),((hi,1))
+reduce phase: hello:2,hi:1,ram:2
+
+features :
+scalibility: we can add more systems without a downtime
+cost effective: hardware is cheap
+flexibility: java,scala,python,and r
+fast: parallel processing.
+high availability
+
+
+sqoop: injection tool
+========
+
+used to insert data from rdbms to hdfs or hdfs to rdbms
+
+Import: rdbms to hdfs
+export: hdfs to rdbms
+
+mysql: 
+------
+mysql -u root -p (enter password= cloudera)
+now basics like:
+----------------------
+show databases
+use database name
+show tables
+
+before sqoop they used mapreduce (rdbms->hdfs)
+
+bydefault sqoop uses mapreduce but only mapper is used and no reducer. 
+
+(* diff between sqoop and hive
+
+sqoop = mapper
+hive = mapper + reducer
+
+
+)
+
+sqoop commands:
+----------------
+to show databases in mysql with sqoop:
+-----------------------------------------
+ sqoop list-databases connect jdbc:mysql://localhost/ --username root --password cloudera
+
+to show tables in databases:
+-----------------------------
+sqoop list-tables --connect jdbc:mysql://localhost/retail_db --username root --password cloudera
+
+import table:
+--------------
+sqoop import --connect jdbc:mysql://localhost/retail_id --username root --password cloudera --table orders
+
+import to a specific folder:
+---------------------------------
+sqoop import --connect jdbc:mysql://localhost/retail_db --username root --password cloudera --table orders --targer-dir /user/cloudera/giri
+
+append and delete:
+-------------------
+sqoop import --connect jdbc:mysql://localhost/retail_db --username root --password cloudera --table orders --targer-dir /user/cloudera/giri --append
+to overwrite the existing data:
+sqoop import --connect jdbc:mysql://localhost/reatail_db --username root --password cloudera --table orders --target-dir /user/cloudera/giri --delete-target-dir
+
+
+where condition:
+--------------------
+sqoop import --connect jdbc:mysql://localhost/retail_db --username root --password cloudera --table orders --targer-dir /user/cloudera/giri --where customer="Giri"
+
+particular columns:
+--------------------
+sqoop import --connect jdbc:mysql://localhost/retail_db --username root --password cloudera --table orders --targer-dir /user/cloudera/giri --columns "order_id","order_status"
+
+control mappers: to assign the mappers:
+--------------------------------------------
+here we are adding 10 mappers: -m 10 or --num-mappers 10
+sqoop import --connect jdbc://localhost/cloudera/retail_db --username root --password cloudera --table orders -m 10 --target-dir /user/cloudera/giri 

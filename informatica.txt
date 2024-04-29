@@ -1,0 +1,170 @@
+fexp is passive
+iif(disconflag=0,'active',
+iff(disconflag=1,'inactive',
+'others'))
+
+decode(true,
+discflag=0,'active',
+discflag=1,'inactive',
+'others')
+
+properties of session task:
+source connection , target connection
+
+aggregator transformation: is active transformation
+
+conceptual,logical and physical model:
+cm: basic outline,lm:fields of the table i.e columns are provided and pm:datatypes of the columns are provided
+
+olap cube : its a multidimensional data model , it helps user to view data  in different perspective.
+olap operations : roll-up,drill down,sliceand dice,pivot 
+
+olap are classified as : rolap,molap,holap...
+
+informatica architecture:
+in repository metadata is present : metadata : it is data about data...i.e from where to where the main data has to be traveled..
+intergration service : manages transfer of data 
+repository service: control all repository related thing 
+
+informatica power centre client components:
+repository manager,designer,workflow manager,wf monitor
+RM: manages repository,create or delete folders
+Des:5 components: source analyser,target analyser,transformation developer,maplet designer,mapping designer
+wf_man: 3componets: task developer,worklet designer,workflow designer
+wf_monitor
+
+task developer: reusable:session task,command task,email task
+non-reusable: decision,event raise , event wait,control,assignment,timer
+
+active and passive transformation:
+active: no.of input records <> no.of output records
+passive: no.of input records = no.of output records
+
+connected transformation : if it is in a pipeline then it is called connected
+unconnected transformation : if it is not in a pipeline then it is called unconnected
+
+source qualifier: active and connected transformation
+properties of sq:
+1) SQL query: we can do sql override 
+2) user defined join: homogenious join _ tables from same type of data bases
+3) source filter: filter condition 
+4) select distinct: enable/disable
+5) pre-sql:
+6) post-sql:
+7) no of sorted ports: like order by i.e if we give 1 then based on first column it will group by.
+all the above properties will be disabled if the source is flat file.
+
+in session log we can see 3 things : reader, transformation and writer threads
+
+we can change the sql query in session task also and the session level will have the more value.
+session level properties  will have more values... 
+
+
+source qualifier: dept.emp_id=emp.emp_id(+).... left outer join 
+
+filter transformation: active and connected... it is used to filter out records any where in the pipeline.
+i.e if source is flat file then source qualifier properties will be disbled then filter transformation will be usefull.
+
+expression transformation: passive and connected...it is used for applying business logic
+it has 3 ports:input,output,variable and order of execution is i>v>o
+
+joiner transformation:
+4 joins: normal,master outer,detail outer and full outer 
+master...small table
+if the data is from hetrogenious tables then if we have 5 tables to join the we need 4 joiners i.e n-1 joiners are required.
+
+
+sorter transformation: active and connected
+its like order by clause in sql
+it has 3 ports: input,output,key ports.
+u can select key port morethan once...
+properties:..case sensitive=yes then based on aschi capital will be in first
+null trated as low...
+if we anable the distinct property in properties it will become active transformation
+
+if our sourse is flatfile we cant use distinct in sq so here we use sorter to remove duplicate values.
+
+
+aggregator transformation: active and connected.
+
+for column level only we use aggregator if there is a row level we use expression
+it has 3 ports:input,output,variable and also have group by port also
+
+here if connect the other output ports to target then last record will be fetched and the following aggregator transformation will be done
+
+to improve the performance of aggregator we should enable sorted input in properties...i.e we are giving a sorted input to the transformation..
+
+router transformation: active and connected, single to multiple pipeline and multiple filter in single transformation
+
+rank transformation: active and connected,rank on only one column
+we have rank,dense rank ,row number
+rank: 1,2,3,3,3,6,7,8
+dense rank:1,2,3,3,3,4,5,6
+row number: 1,2,3,4,5,6
+properties : top/bottom
+no of ranks: 5 here it will do for 5 records and if we use group by then the top 5 records from each selected group
+
+sequence generator: passive and connected, auto incremental
+properties: start value, increment by, end value, current value,cycle,reset
+
+union transformation: active and connected
+
+same structured table , and hetrogenious sources...
+union acts as union all ...it will not remove duplicate in order to remove we should use union + sorter(distinct)
+opposite to router, multiple pipeline input--> single pipeline output.
+
+Lookup transformation: connected and unconnected lookup
+lkup trns is used to retrive data based on a specified lookup condition.
+
+connected...it will be in pipeline
+unconnected...
+
+
+multiple lookup port....so we need to do sql override
+
+
+lookup policy on multiple match due to this lookup is an active transformation..
+>use any value
+>use first value
+use last value
+report error
+
+record all values on multiple match...if we unable then we get all duplicate values and then this will become an Active transformation
+
+removing the cartician product: use a sorter(distinct)
+
+update strategy:
+
+
+
+tasks in workflow designer:
+reusable and non-reusable:
+reuse: session,command,email
+non reuse: session,command,email,decession,assignment,event raise,event wait,timer,controll
+
+lookup:(mar 8 10min)
+
+initial load: source to target records loading
+incremental load: record which is not present in the target load to the target.
+
+change between source and target,record is present or not
+
+we can enable or disabble the cache.
+if cahe is enable it will create 2 cache : lookup data and lookup index cache.
+index: it contains conditional column values(12:54)
+data:it contains entire record from lookup table.
+if we dissable the cache it has to go to data base for every record to fetch the data but if u enable it then with the help of index and data cache which wll be stored in our local system for better performance.
+
+rule for enable the cache is if records of lookup table should be less than the source table.
+
+%% only 2 transformations can be connected and unconnected : lookup and strored procedure.
+
+connected lkp: will have input and output links
+unconnected lkp: will not have input and output links and it will be called from another transformation.we use it when we want to call the lookup conditionally.
+
+if we want to lookup there data type and precision of the columns should match i.e the columns on which we are lookuping.
+
+if it is unconnected lkp only one column will be a return that 2 from return port.
+
+only in 3 thing we can do sql overide: source qualifier, lookup, targrt(update overide)
+** the lookup will not filter but instead it will provide null values .

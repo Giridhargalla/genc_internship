@@ -1,0 +1,14 @@
+select * from student
+select name from student
+select distinct name from student
+select count(*) from student
+select count(distinct name) from student
+limit n
+
+select count(cust_id) from customer
+where cust_id = 100
+
+select first ,last from customer
+where first = "erica"
+where (number>=10 or number<20)
+and name = 'giri' 

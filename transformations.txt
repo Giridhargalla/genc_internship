@@ -1,0 +1,482 @@
+
+
+informatica trasformations(9)
+what is transformation
+transformations are the repository objects which are used to
+read data from sources and modify that data as per requirement
+of target  and passes modified data to targets 
+it rePresents set of rules to data flow and how data load to targets
+transformations are classified based on two catageries 
+1-based on connectivity
+connected:- one transformation is connected to the other transformation during
+mappings are called connected transformation
+
+unconnected: - one transformation that not connected to the other transformation during
+mappings but reaturns the values are called unconnected transformations
+
+2-based on change in rows of data
+active: -transformation which no of input records are not equal to the no of output records and change in 
+row id
+passive: -transformation which has no of input records equal to the no of output records
+
+different types of tansformations(what it is,prop,use case,note)
+-comparision btw join,lookup,union
+1-filter(filter)FIL
+2-router(E)
+3-sorter(AZ)
+4-rank(graph)
+5-agregator(W)AGG
+6-joiner(yaro)
+7-lookup(search)
+8-union(U)
+9-normalizer(down yaroo)
+10-expression(f(x))EXP
+11-source qualifier(SQ)
+12-sequance generator(123) 
+
+filter:- transformation used to filter the records according to requirement
+by using filter condition 
+-if the record is satisfied ti fillter condition then it will pass that records
+else block the record
+-active and connected
+-it contains input ports and output ports 
+-input port side of transformation is upstream 
+-input port side of transformation is upstream 
+-input port side of transformation is upstream 
+
+example: -i have one flat file (source) now i need to filter the data which have commision= not null
+and pass to target 
+i will go to power center designer
+now i will import the source file to source qualifier  and crt+s
+now i will import the target file to target designer and crt+s
+now i go to the mapping designer and drag the source and target 
+(i will get the source qualifier along with the source definition
+which helps to informatica to understad the source data) 
+now i will drag the filter transformation and keep the all columns of the source 
+in it 
+and then i will edit the transformation 
+rename(FLT_name) then go to properties then filter condition will be there
+there TRUE(it mean passes satisfied records) will be and then go into it
+then go to ports and give the condition by selecting the column that should apply
+not isnull(column)(having the values and not having the null)
+note;- in functions there will be lot of function we can use them
+now validate it and apply and ok 
+now connect the transformation to the target and 
+do crt+s then in output windo we should get valied then only workflow will work
+now go to workflow and create it start task will come 
+and get the seesion task choose the mapping and edit it and select 
+fail parent if this task fails(it means if the seesion task fails then 
+parent workflow also will get fails automatically)and go to mapping 
+for sources
+readers: file reader
+source file directory: source path 
+source filename: source file name with file type
+for targets
+writers: file writer
+header: output
+output file directory: target path
+output file name: target file and file type
+ go to  config objects and select stop on error as 1 (if any one error occurs
+session task will fail)
+do crt+s should be valid and start then workflow monitor will open and
+shows stetus and down in task details there will be source and target statistics there 
+we can see the records and all 
+now export the files from mapping and workflow and session log 
+
+
+expression
+when ever we need to design bussiness logic or 
+perform non agregator calculations in informatica we will go to it
+non- agregator calculations
+1-can do any intermidiate calculations and give in new column
+2-conactination can be done
+3-can convert one data type to another datatype
+4- can also used to test the conditional statements
+
+-passive and connected
+-have three ports(input,output,variable)
+- it hass expression(not aa port we can write a bussiness logic)
+input port used to get input from column output port used to pass output
+variable port is used to have intermidiate calculations(can not pass to out)
+if to pass the variable port out then 
+a=10, b=55
+v_port=a+b
+output_port=v_port 
+then now we can use this variable port outside as v_port
+
+example 1: i have s ff (employee details) i need to load the data who have the 
+salary >10000 their increment salary= salary+0.1 if not their increment
+salary = salary+0.2 in salary_increament column
+now do to mapping designer take source and target and express trans and drag 
+source data to expression trans and edit the transfoemation
+deselect the output port for salary column and add new column as salary_increment
+and select output port for new column(data type should be equal to 
+salary column)  and go to new column in expression 
+and write the condition 
+IIF(CONDITION,CALCULATION DONE ON SATISFIED RECORDS,CALCULATION DONE ON 
+UNSATISFIEDRECORDS)
+IIF(SALARY>10000,SALARY+(SALARY*0.1),SALARY+(SALARY*0.2))
+now apply and ok 
+tasks 
+1 upper case the firstname
+go to exetrans edit it deselect ouput port for firstname and create new column
+up_fname and select output port for it and go to that column in expression
+and write (UPPER(FIRSTNAME))
+2 concat first name and last name as name, 
+go to exetrans edit it desect output for fname,lname and create new column as
+name and seect output port and go to that column in expression
+and write expression(FNAME||'_'||LNAME)
+3whose salart>10000 their email should be email@gmail.com  and salary
+<=10000 their email should be email@yahoo.com,
+go to exetrans edit it deselect ouput port for email and create new column as
+new_mail and select output port and go to that column in expression 
+and write IFF(SALARY>10000,EMAIL||'@gmail.com',EMAIL||'@yahoo.com')
+4ph_np=515.123.4567 convert to +1-5151234567
+go to exetrans edit it deselect ouput port for ph_no and create new column as
+new_ph and select output port and go to that column in expression .
+and write '+1-'||REPLACECHR(0,ph_no,'.','')
+note:-'' it means null we can also keep null
+
+note(for case insensitiive we use 0 it means if the given condition should
+aplly on upper and lower case  and  1 is used for case sensitive it means 
+the given condition is apllyed for that perticular case only)
+
+5 job_id is from 4th char of job_id
+go to exetrans edit it deselect ouput port for job_id and create new column as
+new_job_id and select output port and go to that column in expression
+and write  SUBSTR(job_id,4)
+
+6 for commision column where we have null we should get 0
+
+go to exetrans edit it deselect ouput port for commision and create new column as
+new_commision and select output port and go to that column in expression 
+and write IIF(ISNULL(COMMISION),0,COMMISION)
+
+7 get manager_id in sequence of number 
+go to exetrans edit it deselect ouput port for manager_id and create new column as
+new_manager_id and select variable  port and go to that column in expression 
+ and write NEW_MANAGER_ID+1 since it is a variable port we can pass out so 
+create another column manager_id1 and select output posrt and assign the 
+new_manager_id in expression 
+
+souter: used to sort the data based on order by column in asc or desc 
+
+note:- when u order the records based on salary in desc but if two records have same salary 
+then those two recrds will be sorted based on the second base column 
+select*from employee order by salary desc hire_date asc;
+if the first sorted records have duplication only it will sort by second
+column
+
+note:- if the based on column have the null value then by default null value
+treated as highest value 
+
+note:- if the distict properties is selected then the duplication will 
+removed then it becomes active transformation
+ 
+note:- in transformation in port which column key port select first based on 
+that column record will sort first and then sort based on second 
+
+-it is active and passive and connected
+-it has three ports input output key 
+-it has direction(asc or desc)
+
+example: sorts the records based on salary desc
+now go to the mapping designer and drag the source and targets 
+drag the sorter trans and drag all the records from source to the trans 
+now edit the sorter trans rename it (srt_transname)
+now go to the ports and select the key port to the based column and then give
+direction and go to properties
+we will have 
+sorter cache size(auto)
+case sensitive
+work directory
+distinct(if enable remove duplicate and all columns key port will be selected )
+tracing level
+null treated low 
+transforation scope
+now apply and ok  and link to the target and create workflow and run
+
+
+router: -(advanced filter transformation)
+used to apply multiple filter conditions and group the records based 
+on satisfied conditions
+example :- if the records which satisfy to condition 1 then they pass to group1
+target and if the records which satisfy to condition2 then they pass to
+group2
+
+note: - if the records which not satify the any given conditions those records
+goes to the default group
+
+note: - if the records which satify the more than one condition it will goes
+to the all respective groups
+
+note: - when we have to divid the three grouups based on three conditions we
+can use three filter transformations but we can not take the records which not 
+satisfy the all three conditions to next level so we use the router transformation
+
+-it is active and  onnected 
+- it has two ports input and output
+- every column has one input group and multiple output groups
+
+exapmle:- we have the records of diff countries usa india china uk now group
+the records based on countries of us,india,uk
+
+now go to source analyser import the source and go to target designer and impotr
+the no of target you need (no of target tables=no of groups +1)
+
+now go to mapping designer create mapping and drag source and targets
+now take router transformation drag the records from source(records from 
+source taken wont have output port have only input ports)
+now edit the transformation rename it (RTR_transname)
+now go to groups and add the new group
+(when we add one group it will by default create the default group also)
+now add how many groups you want and edit the group names 
+now go to the group filter condition now apply the condition you want by using
+functions and ports  for each group
+UPPER(COLUMN_NAME)='US'
+now validate apply ok 
+now in router transformation output groups will be created which have only 
+output ports now link the output groups to respective targets and crt+s 
+and crate work flow(select truncate target table) and run it 
+
+rank:- used to sort based on ranking of des or asc 
+
+note: we can rank on only one column
+note: - we have two types of ranks (consigative rank and dence rank)
+data  c_rank     d_rank
+700     1          1
+600     2          2
+500     3          3
+500     3          3
+400     5          4
+note: consigative rank is equal to the no of records 
+note: cant do dence rank by using rank transformation instead 
+we can do by using expression transformation
+
+-active and connected
+- it has three ports input output rank 
+-it has group by (give group by column)
+
+
+example:- sort the records based on ranking of salary of desc of rank 
+query: - rank()over(order by salary desc)
+open the mapping designer drag the source and target now drag the 
+rank transformation then by default we will get rankindex column(containce
+consigative rank)
+now drag all source records to the rank trasformation and edit it rename it 
+(RNKtrans) and go to ports and select rank port on based column  and go to the
+properties we have 
+cache directory
+top/bottom: top means desc, bottom means asc
+no of ranks: no of records 
+case sensitive
+tracing level
+rank data cache
+rank index cache 
+transformation scope
+now apply ok and save 
+crate workflow  and run
+
+
+joiner:- transformation which is used to join heterogenious data sources 
+note: sql joiners used to join the homogeneos data sources (data from same databases) but 
+in informatica joiner transformation used to join the heterogenious data sources(data from
+different databases)
+-active and connected
+-have two ports input and output
+-it has two sources(master table and detail table)
+master table:- table which have less no of rows
+detail table:- table which has more no of rows
+-can connect to two upstreams and multiple downstreams
+-for n no of tables we need n-1 joiners
+
+types of join 
+1inner(normal) join:common records from both the table
+2left(master) outer join:all the records from left and common from right
+3right(detail) outer join:all the recotds from right and common from left
+4full outer join:all records from both the tables
+
+example:-used to join the employe source and depertment source which have
+common column 
+
+go to mapping designer and drag the sources and targets and drag the 
+joiner transformation and drag the columns of tow tables to it and now edit
+it rename it go to condition add new condition  and give condition
+now go to the properties and select join type apply ok and connect to
+target
+
+aggregator:- transformation used to perform the aggregate functions
+on source data 
+-active and connected
+-it has four ports inpu, output, variable,groupy by(used to avoid the duplication)
+note:- agrregator do two operations(sort and aggregate)
+but in properties when we enable the sorted input the our agregator 
+transformation expects sorted input so we need to use the sorter
+transformation to sort then we need to pass data to aggregator transformation
+note :-irrespective of the no of records you will get only one record in 
+output last record will get that output
+example :-i need sum the salary of employes and group by dep_id
+go to mapping designer drag source and target and take agregate 
+transformation and take new column and take the  function and select the ports 
+apply and ok
+
+lookup:-transformation used to retrive data based on specified lookup
+condition
+-it is active, connected, unconnected
+-it has four ports (input,putput,look up,return)
+-lookup transformation does(get a related values,perform a calculations,
+update slowly changing dimension tables)
+joiner performs(inner, left outer, right outer, full outer)but lookup
+can perform only left outer join 
+types of lookup transformation
+1-connected lookup
+2-unconnected lookup
+1-connected lookup
+exapmle:i have the sorce(employe_id,emp_name,emp_email,dept_id)
+but i need target(emp_id,emp_name,emp_email,dept_id,dept_name,dept_loc)
+go to mapping designer drag the source and target and connect the  source and target
+which have common columns now take the lookup transformation then it will ask which table u need as 
+lookup and select it now drag the column to look up from source 
+which is common for both  
+by edit the transformation and go to condition and give the condition
+ now connect the new columns from look up to target apply and ok
+2-unconnected lookup: -
+note: - for unconnected lookup we need to use the expression transformation
+
+exapmle: -
+i have the sorce(employe_id,emp_name,emp_email,dept_id)
+but i need target(emp_id,emp_name,emp_email,dept_id,dept_name,dept_loc)
+go to maping designer and drag the source and target
+take the expression transformation and drag the columns of source to the expression
+transformation and edit it rename it and add  new columns waht ever u want
+now go to that new columns and give condition 
+:LKP.LKPTRANS(column of foreign key) for each new column 
+apply and ok 
+now take the loopup trans and select the source you want and add the 
+one new column created in expression and connect it to same column in 
+that table 
+now take other lookup table and add another new column in expresion
+trans and connect the same column 
+appy and ok  and create work flow and run it 
+
+difference btw the connected  and unconnected look up 
+where connected look up will be in pipeline and unconnected wont be pipeline
+of mapping 
+
+union: -used to join the same structure sources(data types of columns of two 
+tables are same)(table1: id,name,mobile)(table2: id,name,phone)
+if we have(table1:cust_id,cust_name,dep_id)(table2: dept_id, dept_name
+dept_loc) we need to use joiner transformation
+-(opposite to router)
+router: - single to manny
+unino: - manny to single  of same structure data 
+-having multiple inputs and single output
+-it is active and  connected
+it is active because it changes the row id of columns
+-in informatica union will act as union all (means wont remove duplicates)
+if we want to remove duplicate use the sorter transformation and act as union data 
+example:
+go to the mapping designer and drag the source and target and take the 
+union transformations and drag the all data from source one to trans
+then automatically output group will be created
+now edit it then rename it and go to groups and add the groups how many you want
+appy and ok now link the second source to the second group of union trans
+now connect the group 1 to the target 
+crt+s  and create the work flow and run it 
+(to avoid duplication we can use sorter transformation(enable distinct)
+
+normalizer:-
+-it is active and connected 
+- used to convert single row to multiple columns and multiple columns to single columns
+-instaed of source qualifier normalizer will be used 
+-in it extra column will be create called GK_id(sequence of num from 1 to no of records)
+-in it another column will be created called GC_ID(give the column no 
+of that record)
+go to the mapping designer and drag the sources and targets and take 
+the normalizer transformation(we can not drag the data from source to the trans)
+so edit the trans and go to normalizer and add the columns u want(accept for
+gk_id,gc_id) 
+we need to give the occurs(if we given 0 by default 1 will add)
+it will give that how many times that column should be repeat
+and link the trans to tarrget and create work flow and run it 
+
+note:- if we have on ecolumn in target but we didnt given any source to it 
+then it stores the null values 
+
+sequence generator:- 
+-it is passive and connected
+-have only two output ports(nextval(gives next value of sequence),
+currentval(gives current value of sequence))
+properties of sequence generator 
+1-start value:1
+2-increment by:1
+3-end value:3000
+4-current value:(grater than or equal to start value)1
+5-cycle:it can enable or disable
+(if we enable once it reaches endvalue it wil again start with start value) 
+6-no of cached value:
+7-reset:it can enable or disable 
+(if we enable it when that session got completed it will set to current or start 
+value)
+example: 
+i have the employee table(fname,lname,email,ph_no,hire_date,job_id) now i 
+need to load this data to target ajnd i wand to add another column emp_id and
+generate sequence of numbers transformation
+go to mapping designer and drag the source and target 
+now connect the columns with target which are common
+now take sequence generator now connect that nextval to emp_id in target
+edit it and rename and go to properties 
+now create a workflow and run it 
+
+case1-load every 4th record to target
+go to maping designer and drag the source and target 
+take the filter tragsformation and sequence generator to mapping now drag all 
+columns from source to filter and drag the nextval of sequence qualifier 
+to the filter transformation 
+now edit the sequence qualifier and go to properties 
+start - 1,end-4,increment by-1,current value-1,cycle(enable),reset(enable)
+now edit the filter trans give condition columnname = value and rename it and create workflow and run it
+
+
+case2-load the sequence records to 3 target tables
+1st record to 1st table and 2nd record to 2nd table and 3rd record to 3rd table
+and again 4th record to 1st table 
+go to mapping designe rdrag the targets and sources now tage the router trans
+and drag all the columns of source to the router transformation 
+now take the sequence generator here and drag the nextval to the router 
+edit the sequence generator and go to properties and give
+(start: 1,end: 3,curval:1,cycle(enable),reset(enable))
+now edit the router and give groups howmany u want  and give the condition 
+now in router groups are are connect to targets
+crete workflow and run it
+
+case3-load sequence records to 3 target tables in reverse order
+1st record to 1st table and 2nd record to 2nd table and 3rd record to 3rd table
+and again 4th record to 3rd table and 5th record to 2nd and 6th to 1st 
+again 7th to 1st target
+now to mapping design and drag source and trget and take router and drag all
+columns of router and take the sequence generator and edit it and go to prop
+(start:-1,end:-6,increement by: 1, current: 1,cycle(enable),reset(enable)) 
+now edit the router and create groups and link to tagets and create workflow 
+and run it 
+
+
+source qualifier
+transformation used to convert that source data type to informatica native data tyep
+-it is active and connectd transformation 
+note: in source qualifier when u not override any properties it takes 
+all the records form the table
+note:- trancing level is common for all the transformations
+note:- if the source if flat file all are the above properties will be disable
+except trancing level
+note:- in session log we can see three threads(reader,transformation,writer)
+properties of source qualifier 
+1sql query: we can write the sql query and restrict the data
+2user defined joins:we can join the homogenious source(tables from same db))
+3source filter: can give filter condition
+4select distinct: avoid duplication
+5pre sql: we can give sql query which executes before execution of sql query
+6post sql: we can give sql query which executes after execution of sql query
+7no of sorted ports 
+
+
